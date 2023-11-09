@@ -1,5 +1,6 @@
 import React from 'react'
 import { useForm } from '../../hooks/useForm';
+import { Global } from '../../helpers/Global';
 
 export const Login = () => {
 
@@ -14,10 +15,18 @@ export const Login = () => {
     let userToLogin = form;
 
     //Peticion al backend
+    const request = await fetch(Global.url + 'user/login', {
+      method: "POST",
+      body: JSON.stringify(userToLogin),
+      headers: {
+        "Content-Type":"application/json"
+      }
+    });
 
+    const data = await request.json();
 
     //Persistir los datos en el navegador
-
+    console.log(data);
 
   }
 
