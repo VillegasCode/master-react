@@ -6,7 +6,7 @@ import { Global } from '../../helpers/Global';
 export const Register = () => {
 
   const { form, changed } = useForm({});
-  const [ saved, setSaved ] = useState("not_sent");
+  const [saved, setSaved] = useState("not_sent");
 
   const saveUser = async (e) => {
     //Prevenir actualización de pantalla al presionar el botón registrar
@@ -28,8 +28,10 @@ export const Register = () => {
 
     console.log(data);
 
-    if (data.status == "success"){
+    if (data.status == "success") {
       setSaved("saved");
+    } if (data.status == "duplicate") {
+      setSaved("duplicate");
     } else {
       setSaved("error");
     }
@@ -45,8 +47,17 @@ export const Register = () => {
 
       <div className="content__posts">
 
-        <strong className='alert alert-success'>{saved == "saved" ? "Usuario Registrado correctamente!" : ""}</strong>
-        <strong className='alert alert-danger'>{saved == "error" ? "Error, no se registró usuario!" : ""}</strong>
+        {saved == "saved" ?
+          <strong className='alert alert-success'>Usuario Registrado correctamente!"</strong>
+          : ""}
+
+        {saved == "duplicate" ?
+          <strong className='alert alert-danger'>No se puede registrar, el usuario ya existe</strong>
+          : ""}
+
+        {saved == "error" ?
+          <strong className='alert alert-danger'>"Error, no se registró usuario!"</strong>
+          : ""}
 
         <form className='register-form' onSubmit={saveUser}>
           <div className='form-group'>
