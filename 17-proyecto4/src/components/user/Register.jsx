@@ -1,10 +1,12 @@
 import React from 'react';
+import { useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { Global } from '../../helpers/Global';
 
 export const Register = () => {
 
   const { form, changed } = useForm({});
+  const [ saved, setSaved ] = useState("not_sent");
 
   const saveUser = async (e) => {
     //Prevenir actualización de pantalla al presionar el botón registrar
@@ -26,6 +28,12 @@ export const Register = () => {
 
     console.log(data);
 
+    if (data.status == "success"){
+      setSaved("saved");
+    } else {
+      setSaved("error");
+    }
+
   } //FIN DEL MÉTODO GUARDAR
 
 
@@ -36,6 +44,10 @@ export const Register = () => {
       </header>
 
       <div className="content__posts">
+
+        <strong className='alert alert-success'>{saved == "saved" ? "Usuario Registrado correctamente!" : ""}</strong>
+        <strong className='alert alert-danger'>{saved == "error" ? "Error, no se registró usuario!" : ""}</strong>
+
         <form className='register-form' onSubmit={saveUser}>
           <div className='form-group'>
             <label htmlFor='name'>Nombre</label>
