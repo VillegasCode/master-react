@@ -1,11 +1,12 @@
 import React from 'react';
 import { useForm } from '../../hooks/useForm';
+import { Global } from '../../helpers/Global';
 
 export const Register = () => {
 
-  const {form, changed} = useForm({});
+  const { form, changed } = useForm({});
 
-  const saveUser = async(e) => {
+  const saveUser = async (e) => {
     //Prevenir actualización de pantalla al presionar el botón registrar
     e.preventDefault();
 
@@ -13,9 +14,19 @@ export const Register = () => {
     let newUser = form;
 
     //Guardar usuario en el backend
-    console.log(newUser);
-    //const request = await fetch("url completa", opciones)
-  }
+    const request = await fetch(Global.url + "user/register", {
+      method: "POST",
+      body: JSON.stringify(newUser),
+      headers: {
+        "Content-type": "application/json"
+      }
+    });
+
+    const data = await request.json();
+
+    console.log(data);
+
+  } //FIN DEL MÉTODO GUARDAR
 
 
   return (
@@ -32,8 +43,8 @@ export const Register = () => {
           </div>
 
           <div className='form-group'>
-            <label htmlFor='surname'>Apellidos</label>
-            <input type='text' name='surname' onChange={changed} />
+            <label htmlFor='nick'>Nickname</label>
+            <input type='text' name='nick' onChange={changed} />
           </div>
 
           <div className='form-group'>
