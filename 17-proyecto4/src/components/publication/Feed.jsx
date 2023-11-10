@@ -1,7 +1,13 @@
 import React from 'react';
 import avatar from '../../assets/img/user.png';
+import useAuth from '../../hooks/useAuth';
 
 export const Feed = () => {
+
+    const {compartido} = useAuth();
+
+    console.log(compartido);
+
     return (
         <section className="layout__content">
 
