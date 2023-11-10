@@ -21,14 +21,17 @@ export const Login = () => {
       method: "POST",
       body: JSON.stringify(userToLogin),
       headers: {
-        "Content-Type":"application/json"
+        "Content-Type": "application/json"
       }
     });
 
     const data = await request.json();
 
-    //Persistir los datos en el navegador
+    //Persistir LA SESIÓN con el TOKEN en todo el navegador mientras tenga la sesión iniciada
     //console.log(data);
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
     if (data.status == "success") {
       setSaved("login");
     } else {
@@ -43,7 +46,7 @@ export const Login = () => {
       </header>
 
       <div className="content__posts">
-      {saved == "login" ?
+        {saved == "login" ?
           <strong className='alert alert-success'>Usuario identificado correctamente!"</strong>
           : ""}
 
