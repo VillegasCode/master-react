@@ -26,9 +26,9 @@ export const Login = () => {
     });
 
     const data = await request.json();
+    //console.log(data);
 
     //Persistir LA SESIÓN con el TOKEN en todo el navegador mientras tenga la sesión iniciada
-    //console.log(data);
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
 
