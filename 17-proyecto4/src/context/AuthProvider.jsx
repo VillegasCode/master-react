@@ -15,6 +15,10 @@ export const AuthProvider = ({ children }) => {
     //Objeto que guarda el estado de los contadores
     const [counters, setCounters] = useState({});
 
+
+    //Objeto para mostrar una pantalla de CARGANDO
+    const [loading, setLoading] = useState(true);
+
     //Hook useEffect para ejecutar el método authUser cada vez que se carga la página
     useEffect(() => {
         authUser();
@@ -59,16 +63,18 @@ export const AuthProvider = ({ children }) => {
 
         const dataCounters = await requestCounters.json();
 
-        //Setear el estado de auth
+        //Setear el estado de auth, counters, loading
         setAuth(data.Profile);
         setCounters(dataCounters);
+        setLoading(false);
     }
 
     return (<AuthContext.Provider
         value={{
             auth,
             setAuth,
-            counters
+            counters,
+            loading
         }}
     >
         {children}
