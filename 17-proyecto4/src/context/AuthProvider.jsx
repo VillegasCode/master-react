@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Profiler } from 'react';
 import { useState, useEffect, createContext } from 'react';
 import { Global } from '../helpers/Global';
 
@@ -40,26 +40,27 @@ export const AuthProvider = ({ children }) => {
         const request = await fetch(Global.url + "user/profile/" + userId, {
             method: "GET",
             headers: {
-                "Content-type": "application/json",
-                "Authorizarion": token
+                "Content-Type": "application/json",
+                "Authorization": token
             }
         });
 
         const data = await request.json();
+        //console.log(data.Profile.name);
 
         //Petición para los contadores follows, following, etc del usuario
         const requestCounters = await fetch(Global.url + "user/counters/" + userId, {
             method: "GET",
             headers: {
                 "Content-type": "application/json",
-                "Authorizarion": token
+                "Authorization": token
             }
         });
 
         const dataCounters = await requestCounters.json();
 
         //Setear el estado de auth
-        setAuth(data.user);
+        setAuth(data.Profile);
         setCounters(dataCounters);
     }
 
