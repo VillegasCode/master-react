@@ -1,18 +1,47 @@
 import React, { useState } from 'react'
 import useAuth from '../../hooks/useAuth';
 import { Global } from '../../helpers/Global';
+import { SerializeForm } from '../../helpers/SerializeForm';
 
 export const Config = () => {
 
-  const {auth} = useAuth();
+  const {auth, setAuth} = useAuth();
 
   const [saved, setSaved] = useState("not_saved");
 
-  const updateUser = (e) => {
-
-    console.log(auth);
-
+  const updateUser = async(e) => {
     e.preventDefault();
+
+    //Recoger datos del formulario
+    let newDataUser = SerializeForm(e.target);
+
+    //Borrar propiedad innecesaria
+    delete newDataUser.file0;
+
+    //Actualizar usuario en la base de datos, hacer petición ajax
+    const request = await fetch(Global.url + "user/update", {
+      method: "PUT",
+      body: JSON.stringify(newDataUser),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": localStorage.getItem("token"),
+      }
+    });
+
+    const data = await request.json();
+
+    if (data.status == "success"){
+      delete data.user.image;
+      delete data.user.password;
+
+      setAuth(data.user);
+      setSaved("saved");
+
+      console.log(auth);
+    } else {
+      setSaved("error");
+    }
+
   }
 
   return (
@@ -24,15 +53,12 @@ export const Config = () => {
       <div className="content__posts">
 
         {saved == "saved" ?
-          <strong className='alert alert-success'>Usuario Registrado correctamente!"</strong>
+          <strong className='alert alert-success'>Usuario Actualizado correctamente!"</strong>
           : ""}
 
-        {saved == "duplicate" ?
-          <strong className='alert alert-danger'>No se puede registrar, el usuario ya existe</strong>
-          : ""}
 
         {saved == "error" ?
-          <strong className='alert alert-danger'>"Error, no se registró usuario!"</strong>
+          <strong className='alert alert-danger'>"Error, no se actualizó usuario!"</strong>
           : ""}
 
         <form className='config-form' onSubmit={updateUser}>
@@ -77,7 +103,7 @@ export const Config = () => {
           </div>
           <br/>
 
-          <input type='submit' value='Regístrate' className='btn btn-success' />
+          <input type='submit' value='Actualizar' className='btn btn-success' />
         </form>
       </div>
     </>
