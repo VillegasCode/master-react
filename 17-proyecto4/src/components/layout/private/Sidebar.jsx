@@ -8,7 +8,7 @@ export const Sidebar = () => {
 
     const {auth, counters} = useAuth();
 
-    console.log(counters);
+    //console.log(auth);
 
     return (
         <aside className="layout__aside">
@@ -51,7 +51,7 @@ export const Sidebar = () => {
 
                         <div className="stats__following">
                             <a href="#" className="following__link">
-                                <span className="following__title">Publicariones</span>
+                                <span className="following__title">Publicaciones</span>
                                 <span className="following__number">{counters.publications}</span>
                             </a>
                         </div>
