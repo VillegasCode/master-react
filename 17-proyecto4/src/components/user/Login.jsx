@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react';
 import { useForm } from '../../hooks/useForm';
+import useAuth from '../../hooks/useAuth';
 import { Global } from '../../helpers/Global';
 
 export const Login = () => {
@@ -8,6 +9,8 @@ export const Login = () => {
   //Rellenar el estado de form con el método changed que se importan del componente HOOKS useForm.jsx
   const { form, changed } = useForm({});
   const [saved, setSaved] = useState("not_sent");
+
+  const {setAuth} = useAuth();
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -34,6 +37,15 @@ export const Login = () => {
 
     if (data.status == "success") {
       setSaved("login");
+
+      //SETEAR LOS DATOS EN EL AUTH
+      setAuth(data.user);
+
+      //REDIRECCIÓN DE LOGIN AL FEED
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+
     } else {
       setSaved("error");
     }
