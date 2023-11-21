@@ -29,7 +29,7 @@ export const Login = () => {
     });
 
     const data = await request.json();
-    console.log(data);
+    console.log("data tiene: " + JSON.stringify(data));
 
     //Persistir LA SESIÓN con el TOKEN en todo el navegador mientras tenga la sesión iniciada
     localStorage.setItem("token", data.token);
@@ -40,7 +40,7 @@ export const Login = () => {
 
       //SETEAR LOS DATOS EN EL AUTH
       setAuth(data.user);
-
+      console.log("DATA.USER: " + JSON.stringify(data.user));
       //REDIRECCIÓN DE LOGIN AL FEED
       setTimeout(() => {
         window.location.reload();
