@@ -1,6 +1,6 @@
 import React from 'react'
-import avatar from '../../../assets/img/user.png';
 import { NavLink } from 'react-router-dom';
+import avatar from '../../../assets/img/user.png';
 import useAuth from '../../../hooks/useAuth';
 import { Global } from '../../../helpers/Global';
 
@@ -49,7 +49,7 @@ export const Nav = () => {
                 <li className="list-end__item">
                     <NavLink to="/social/ajustes" className="list-end__link">
                         <i className='fa-solid fa-gear'></i>
-                        <span className="list-end__name">AJUSTES</span>
+                        <span className="list-end__name">Ajustes</span>
                     </NavLink>
                 </li>
                 <li className="list-end__item">
