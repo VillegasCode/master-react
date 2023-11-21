@@ -16,6 +16,9 @@ export const Config = () => {
     //Recoger datos del formulario
     let newDataUser = SerializeForm(e.target);
 
+    //Capturar el token desde el localstorage
+    const token = localStorage.getItem("token");
+
     //Borrar propiedad innecesaria
     delete newDataUser.file0;
 
@@ -25,20 +28,46 @@ export const Config = () => {
       body: JSON.stringify(newDataUser),
       headers: {
         "Content-Type": "application/json",
-        "Authorization": localStorage.getItem("token")
+        "Authorization": token
       }
     });
 
     const data = await request.json();
-    console.log("Contenido de data antes de: " + JSON.stringify(data));
 
-    if (data.status == "success") {
+    if (data.status == "success" && data.user) {
       delete data.userUpdated.password;
       setAuth(data.userUpdated);
       setSaved("saved");
       console.log(JSON.stringify(data));
     } else {
       setSaved("error");
+    }
+
+    //Subida de imágenes
+    const fileInput = document.querySelector("#file");
+
+    if (data.status == "success" && fileInput.files[0]){
+
+      //Recoger imagen a subir
+      const formData = new FormData();
+      formData.append('file0', fileInput.files[0]);
+
+      //Petición para enviar el fichero
+      const uploadRequest = await fetch(Global.url + "user/upload", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Authorization": token
+        }
+      });
+      const uploadData = await uploadRequest.json();
+
+      if (uploadData.status == "success" && uploadData.user) {
+        setAuth(uploadData.user);
+        setSaved("saved");
+      } else {
+        setSaved("error");
+      }
     }
   }
 
@@ -56,8 +85,7 @@ export const Config = () => {
 
 
         {saved == "error" ?
-          <strong className='alert alert-danger'>"Error, no se actualizó usuario!"</strong>
-          : ''}
+          <strong className='alert alert-danger'>"Error, no se actualizó usuario!"</strong>: ''}
 
         <form className='config-form' onSubmit={updateUser}>
           <div className='form-group'>
