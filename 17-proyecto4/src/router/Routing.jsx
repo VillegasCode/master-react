@@ -28,7 +28,7 @@ export const Routing = () => {
                         <Route path="feed" element={<Feed />} />
                         <Route path="logout" element={<Logout />} />
                         <Route path="gente" element={<People />} />
-                        <Route path="ajustes" element={<Config/>} />
+                        <Route path="ajustes" element={<Config />} />
                     </Route>
 
                     {/* RUTA DE ERROR 404 */}
