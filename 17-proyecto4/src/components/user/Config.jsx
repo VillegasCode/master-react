@@ -5,11 +5,12 @@ import { SerializeForm } from '../../helpers/SerializeForm';
 
 export const Config = () => {
 
-  const {auth, setAuth} = useAuth();
+  const { auth, setAuth } = useAuth();
 
   const [saved, setSaved] = useState("not_saved");
 
-  const updateUser = async(e) => {
+
+  const updateUser = async (e) => {
     e.preventDefault();
 
     //Recoger datos del formulario
@@ -19,29 +20,26 @@ export const Config = () => {
     delete newDataUser.file0;
 
     //Actualizar usuario en la base de datos, hacer petición ajax
-    const request = await fetch(Global.url + "user/update", {
+    const request = await fetch(Global.url + 'user/update', {
       method: "PUT",
       body: JSON.stringify(newDataUser),
       headers: {
         "Content-Type": "application/json",
-        "Authorization": localStorage.getItem("token"),
+        "Authorization": localStorage.getItem("token")
       }
     });
 
     const data = await request.json();
+    console.log("Contenido de data antes de: " + JSON.stringify(data));
 
-    if (data.status == "success"){
-      delete data.user.image;
-      delete data.user.password;
-
-      setAuth(data.user);
+    if (data.status == "success") {
+      delete data.userUpdated.password;
+      setAuth(data.userUpdated);
       setSaved("saved");
-
-      console.log(auth);
+      console.log(JSON.stringify(data));
     } else {
       setSaved("error");
     }
-
   }
 
   return (
@@ -54,14 +52,18 @@ export const Config = () => {
 
         {saved == "saved" ?
           <strong className='alert alert-success'>Usuario Actualizado correctamente!"</strong>
-          : ""}
+          : ''}
 
 
         {saved == "error" ?
           <strong className='alert alert-danger'>"Error, no se actualizó usuario!"</strong>
-          : ""}
+          : ''}
 
         <form className='config-form' onSubmit={updateUser}>
+          <div className='form-group'>
+            <label htmlFor='name'>ID</label>
+            <input type='text' name='_id' defaultValue={auth._id} disabled={true} />
+          </div>
           <div className='form-group'>
             <label htmlFor='name'>Nombre</label>
             <input type='text' name='name' defaultValue={auth.name} />
@@ -95,13 +97,13 @@ export const Config = () => {
           <div className='form-group'>
             <label htmlFor='file0'>Avatar</label>
             <div className="general-info__container-avatar">
-                            {auth.image != "default.png" && <img src={Global.url + "user/avatar/" + auth.image} className="container-avatar__img" alt="Foto de perfil" />}
-                            {auth.image == "default.png" && <img src={avatar} className='container-avatar__img' alt="Foto de perfil" />}
+              {auth.image != "default.png" && <img src={Global.url + "user/avatar/" + auth.image} className="container-avatar__img" alt="Foto de perfil" />}
+              {auth.image == "default.png" && <img src={avatar} className='container-avatar__img' alt="Foto de perfil" />}
             </div>
             <br />
-            <input type='file' name='file0' id="file" />
+            <input type="file" name="file0" id="file" />
           </div>
-          <br/>
+          <br />
 
           <input type='submit' value='Actualizar' className='btn btn-success' />
         </form>
