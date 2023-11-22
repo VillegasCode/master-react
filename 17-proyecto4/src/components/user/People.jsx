@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import avatar from '../../assets/img/user.png';
 import { Global } from '../../helpers/Global';
+import useAuth from '../../hooks/useAuth'
 
 export const People = () => {
 
+  const { auth } = useAuth();
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [more, setMore] = useState(true);
@@ -133,22 +135,23 @@ export const People = () => {
 
               </div>
 
+              {/* SOLO MOSTRAR ESTO CUANDO EL USUARIO NO SEA EL MÍO */}
+              {user._id != auth._id &&
+                <div className="post__buttons">
+                  {!following.includes(user._id) &&
+                    <button className="post__button post__button--green" onClick={() => follow(user._id)}>
+                      Seguir
+                    </button>
+                  }
 
-              <div className="post__buttons">
-                {!following.includes(user._id) &&
-                  <button className="post__button post__button--green" onClick={() => follow(user._id)}>
-                    Seguir
-                  </button>
-                }
+                  {following.includes(user._id) &&
+                    <button className="post__button" onClick={() => unfollow(user._id)}>
+                      Dejar de seguir
+                    </button>
+                  }
 
-                {following.includes(user._id) &&
-                  <button className="post__button" onClick={() => unfollow(user._id)}>
-                    Dejar de seguir
-                  </button>
-                }
-
-              </div>
-
+                </div>
+              }
             </article>
 
           );
