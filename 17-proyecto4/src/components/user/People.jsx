@@ -5,14 +5,17 @@ import { Global } from '../../helpers/Global';
 export const People = () => {
 
   const [users, setUsers] = useState([]);
+  const [page, setPage] = useState(1);
+  const [more, setMore] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getUsers();
+    getUsers(nextPage);
   }, []);
 
-  const getUsers = async () => {
+  const getUsers = async (nextPage = 1) => {
     //Petición para sacar usuarios
-    const request = await fetch(Global.url + 'user/list/1', {
+    const request = await fetch(Global.url + 'user/list/' + nextPage, {
       method: "GET",
       headers: {
         "Content-type": "application/json",
@@ -24,11 +27,29 @@ export const People = () => {
 
     //Crear un estado para poder listar usuarios
     if (data.users && data.status == "success") {
-      setUsers(data.users);
-      console.log(data.users);
-      //Paginacion
+      let newUsers = data.users;
 
+      if (users.length >= 1) {
+        newUsers = [...users, ...data.users];
+      }
+
+      setUsers(newUsers);
+
+      //Termina de hacer la petición AJAX entonces se vuelve false el estado LOADING
+      setLoading(false);
+
+      //Paginación
+      if (users.length >= (data.total - data.users.length)) {
+        setMore(false);
+      }
     }
+  }
+
+  //Mostrar usuarios de acuerdo a sus páginas correspondientes (PAGINAR USUARIOS Y LISTARLOS)
+  const nextPage = () => {
+    let next = page + 1;
+    setPage(next);
+    getUsers(next);
   }
 
   return (
@@ -70,7 +91,7 @@ export const People = () => {
 
               <div className="post__buttons">
 
-                <a href="#" className="post__button post__">
+                <a href="#" className="post__button post__button--green">
                   Seguir
                 </a>
 
@@ -90,12 +111,15 @@ export const People = () => {
 
       </div>
 
-      <div className="content__container-btn">
-        <button className="content__btn-more-post">
-          Ver mas personas
-        </button>
-      </div>
+        {loading ? <h1>Cargando...</h1> : ""}
 
+      {more &&
+        <div className="content__container-btn">
+          <button className="content__btn-more-post" onClick={nextPage}>
+            Ver mas personas
+          </button>
+        </div>
+      }
     </section>
   )
 }
