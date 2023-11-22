@@ -8,6 +8,7 @@ export const People = () => {
   const [page, setPage] = useState(1);
   const [more, setMore] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [following, setFollowing] = useState([]);
 
   useEffect(() => {
     getUsers(nextPage);
@@ -34,7 +35,7 @@ export const People = () => {
       }
 
       setUsers(newUsers);
-
+      setFollowing(data.user_following);
       //Termina de hacer la petición AJAX entonces se vuelve false el estado LOADING
       setLoading(false);
 
@@ -90,14 +91,17 @@ export const People = () => {
 
 
               <div className="post__buttons">
+                {!following.includes(user._id) &&
+                  <a href="#" className="post__button post__button--green">
+                    Seguir
+                  </a>
+                }
 
-                <a href="#" className="post__button post__button--green">
-                  Seguir
-                </a>
-
-                {/* <a href="#" className="post__button">
-      Dejar de seguir
-    </a> */}
+                {following.includes(user._id) &&
+                  <a href="#" className="post__button">
+                    Dejar de seguir
+                  </a>
+                }
 
               </div>
 
@@ -111,7 +115,7 @@ export const People = () => {
 
       </div>
 
-        {loading ? <h1>Cargando...</h1> : ""}
+      {loading ? <h1>Cargando...</h1> : ""}
 
       {more &&
         <div className="content__container-btn">
