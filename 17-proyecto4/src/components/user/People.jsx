@@ -53,6 +53,50 @@ export const People = () => {
     getUsers(next);
   }
 
+  const follow = async (userId) => {
+    //petición al backend para guardar el follow
+    const request = await fetch(Global.url + "follow/save", {
+      method: "POST",
+      body: JSON.stringify({ followed: userId }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": localStorage.getItem("token")
+      }
+    });
+
+    const data = await request.json();
+
+    //cuando este todo correcto
+    if (data.status == "success") {
+      //Actualizar estado de following agregando el nuevo follow
+      setFollowing([...following, userId])
+    }
+
+  }
+
+  const unfollow = async (userId) => {
+    //petición al backend para borrar el follow
+    const request = await fetch(Global.url + 'follow/unfollow/' + userId, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": localStorage.getItem("token")
+      }
+    });
+
+    const data = await request.json();
+
+    //cuando este todo correcto
+    if (data.status == "success") {
+      //Actualizar estado de following
+      //filtrando los datos para eliminar el antiguo userId
+      //que acabo de dejar de seguir
+      let filterFollowings = following.filter(followingUserId => userId !== followingUserId);
+      setFollowing(filterFollowings);
+    }
+
+  }
+
   return (
     <section className="layout__content">
 
@@ -92,15 +136,15 @@ export const People = () => {
 
               <div className="post__buttons">
                 {!following.includes(user._id) &&
-                  <a href="#" className="post__button post__button--green">
+                  <button className="post__button post__button--green" onClick={() => follow(user._id)}>
                     Seguir
-                  </a>
+                  </button>
                 }
 
                 {following.includes(user._id) &&
-                  <a href="#" className="post__button">
+                  <button className="post__button" onClick={() => unfollow(user._id)}>
                     Dejar de seguir
-                  </a>
+                  </button>
                 }
 
               </div>
