@@ -35,15 +35,28 @@ export const Following = () => {
     });
 
     const data = await request.json();
+    console.log(data);
+    //Recorrer y limpiar follows para quedarme con followed
+    let cleanUsers = [];
+    data.follows.forEach(follow => {
+        cleanUsers = [...cleanUsers, follow.followed]
+    });
+
+    data.users = cleanUsers;
+    console.log("DATA USERS: " + data.users);
+
+    
 
     //Crear un estado para poder listar usuarios
-    if (data.follows && data.status == "success") {
+    if (data.users && data.status == "success") {
 
-      let newUsers = data.follows;
+      let newUsers = data.users;
 
       if (users.length >= 1) {
-        newUsers = [...users, ...data.follows];
+        newUsers = [...users, ...data.users];
       }
+
+      console.log(newUsers);
 
       setUsers(newUsers);
       setFollowing(data.user_following);
@@ -51,7 +64,7 @@ export const Following = () => {
       setLoading(false);
 
       //Paginación
-      if (users.length >= (data.total - data.follows.length)) {
+      if (users.length >= (data.total - data.users.length)) {
         setMore(false);
       }
     }
@@ -63,7 +76,7 @@ export const Following = () => {
     <section className="layout__content">
 
       <header className="content__header">
-        <h1 className="content__title">Usuarios que sigue NOMBRE USUARIO</h1>
+        <h1 className="content__title">Usuarios que tú sigues NOMBRE USUARIO</h1>
       </header>
 
       <UserList users={users}
