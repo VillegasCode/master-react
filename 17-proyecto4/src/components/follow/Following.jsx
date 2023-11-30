@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Global } from '../../helpers/Global';
 import { UserList } from '../user/UserList';
 import { useParams } from 'react-router-dom';
+import { GetProfile } from '../../helpers/GetProfile';
 
 export const Following = () => {
 
@@ -16,7 +17,7 @@ export const Following = () => {
   
   useEffect(() => {
     getUsers(1);
-    getProfile();
+    GetProfile(params.userId, setUserProfile); //VER VIDEO 324
   }, []);
 
   const getUsers = async (nextPage = 1) => {
@@ -72,25 +73,25 @@ export const Following = () => {
     }
   }
 
-  //Método para sacar datos del usuario logueado por su id
+  //(Actualmente está en un helper llamado GetProfile) Método para sacar datos del usuario logueado por su id
   //Este método lo sacamos cada vez que recargamos la página POR ESO LO PONEMOS EN EL useEffect
-    const getProfile = async() => {
-    const request = await fetch(Global.url + "user/profile/" + params.userId, {
-      method: "GET",
-      headers: {
-        "Content-Type" : "application/json",
-        "Authorization": localStorage.getItem("token")
-      }
-    });
+  //   const getProfile = async() => {
+  //   const request = await fetch(Global.url + "user/profile/" + params.userId, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type" : "application/json",
+  //       "Authorization": localStorage.getItem("token")
+  //     }
+  //   });
 
-    //Obtengo los datos en formato JSON de la petición ajax
-    const data = await request.json();
+  //   //Obtengo los datos en formato JSON de la petición ajax
+  //   const data = await request.json();
 
-    if (data.status == "success") {
-      setUserProfile(data.Profile);
-    }
-    //console.log(data.Profile.name);
-  }
+  //   if (data.status == "success") {
+  //     setUserProfile(data.Profile);
+  //   }
+  //   //console.log(data.Profile.name);
+  // }
 
 
   return (
