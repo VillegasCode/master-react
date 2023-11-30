@@ -10,11 +10,13 @@ export const Following = () => {
   const [more, setMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState([]);
+  const [userProfile, setUserProfile] = useState({});
 
   const params = useParams();
   
   useEffect(() => {
     getUsers(1);
+    getProfile();
   }, []);
 
   const getUsers = async (nextPage = 1) => {
@@ -70,13 +72,32 @@ export const Following = () => {
     }
   }
 
+  //Método para sacar datos del usuario logueado por su id
+  //Este método lo sacamos cada vez que recargamos la página POR ESO LO PONEMOS EN EL useEffect
+    const getProfile = async() => {
+    const request = await fetch(Global.url + "user/profile/" + params.userId, {
+      method: "GET",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization": localStorage.getItem("token")
+      }
+    });
+
+    //Obtengo los datos en formato JSON de la petición ajax
+    const data = await request.json();
+
+    if (data.status == "success") {
+      setUserProfile(data.Profile);
+    }
+    //console.log(data.Profile.name);
+  }
 
 
   return (
     <section className="layout__content">
 
       <header className="content__header">
-        <h1 className="content__title">Usuarios que tú sigues NOMBRE USUARIO</h1>
+        <h1 className="content__title">{userProfile.name} {userProfile.surname} sigue a:</h1>
       </header>
 
       <UserList users={users}
