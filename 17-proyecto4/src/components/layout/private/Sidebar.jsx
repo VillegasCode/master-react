@@ -61,6 +61,13 @@ export const Sidebar = () => {
             } else {
                 setStored("error");
             }
+
+            //LIMPIAR FORMULARIO RESETEARLO
+            if(data.status == "success" && uploadData.status == "success"){
+                const myForm = document.querySelector("#publication-form");
+                myForm.reset();
+            }
+
         }
     }
 
@@ -123,7 +130,7 @@ export const Sidebar = () => {
 
                     {stored == "error" ?
                         <strong className='alert alert-danger'>"Error, no se ha publicado nada"</strong> : ''}
-                    <form className="container-form__form-post" onSubmit={savePublication}>
+                    <form id="publication-form" className="container-form__form-post" onSubmit={savePublication}>
 
                         <div className="form-post__inputs">
                             <label htmlFor="text" className="form-post__label">¿Que estas pesando hoy?</label>
