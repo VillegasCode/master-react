@@ -42,7 +42,7 @@ export const Sidebar = () => {
         //Subir imagen
         const fileInput = document.querySelector("#file");
 
-        if(data.status == "success" && fileInput.files[0]){
+        if (data.status == "success" && fileInput.files[0]) {
             const formData = new FormData();
             formData.append("file0", fileInput.files[0]);
 
@@ -56,14 +56,14 @@ export const Sidebar = () => {
 
             const uploadData = await uploadRequest.json();
 
-            if(uploadData.status == "success"){
+            if (uploadData.status == "success") {
                 setStored("stored");
             } else {
                 setStored("error");
             }
 
             //LIMPIAR FORMULARIO RESETEARLO
-            if(data.status == "success" && uploadData.status == "success"){
+            if (data.status == "success" && uploadData.status == "success") {
                 const myForm = document.querySelector("#publication-form");
                 myForm.reset();
             }
@@ -89,7 +89,7 @@ export const Sidebar = () => {
                         </div>
 
                         <div className="general-info__container-names">
-                            <a href="#" className="container-names__name">{auth.name}</a>
+                            <Link to={"/social/perfil/" + auth._id} className="container-names__name">{auth.name}</Link>
                             <p className="container-names__nickname">{auth.nick}</p>
                         </div>
                     </div>
@@ -111,10 +111,10 @@ export const Sidebar = () => {
 
 
                         <div className="stats__following">
-                            <a href="#" className="following__link">
+                            <Link to={"/social/perfil/" + auth._id} className="following__link">
                                 <span className="following__title">Publicaciones</span>
                                 <span className="following__number">{counters.publications}</span>
-                            </a>
+                            </Link>
                         </div>
 
 
