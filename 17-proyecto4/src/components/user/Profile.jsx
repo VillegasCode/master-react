@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import avatar from '../../assets/img/user.png';
+import {GetProfile} from '../../helpers/GetProfile';
+import {useParams} from 'react-router-dom';
 
 export const Profile = () => {
+
+    const [user, setUser] = useState({});
+    const params = useParams();
+
+    useEffect(() => {
+        GetProfile(params.userId, setUser);
+    }, []);
+
     return (
         <section className="layout__content">
 
@@ -13,12 +23,12 @@ export const Profile = () => {
                     </div>
 
                     <div className="general-info__container-names">
-                        <p className="container-names__name">
-                        <b className='grande'>NAME</b>
+                        <div className="container-names__name">
+                        <h1 className='grande'>{user.name}</h1>
                             <button className="content__button content__button--right">Seguir</button>
-                        </p>
-                        <h2 className="container-names__nickname">USERNAME</h2>
-                        <p>BIOGRAFÍA</p>
+                        </div>
+                        <h2 className="container-names__nickname">{user.nick}</h2>
+                        <p>{user.bio}</p>
                     </div>
                 </div>
 
