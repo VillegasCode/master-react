@@ -7,11 +7,29 @@ import { Global } from '../../helpers/Global';
 export const Profile = () => {
 
     const [user, setUser] = useState({});
+    const [counters, setCounters] = useState({});
     const params = useParams();
 
     useEffect(() => {
         GetProfile(params.userId, setUser);
+        getCounters();
     }, []);
+
+    const getCounters = async() => {
+        const request = await fetch(Global.url + "user/counters/" + params.userId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token")
+            }
+        });
+
+        const data = await request.json();
+
+        if (data.following){
+            setCounters(data);
+        }
+    }
 
     return (
         <section className="layout__content">
@@ -39,13 +57,13 @@ export const Profile = () => {
                     <div className="stats__following">
                         <a href="#" className="following__link">
                             <span className="following__title">Siguiendo</span>
-                            <span className="following__number">10</span>
+                            <span className="following__number">{counters.following}</span>
                         </a>
                     </div>
                     <div className="stats__following">
                         <a href="#" className="following__link">
                             <span className="following__title">Seguidores</span>
-                            <span className="following__number">13</span>
+                            <span className="following__number">{counters.followed}</span>
                         </a>
                     </div>
 
@@ -53,7 +71,7 @@ export const Profile = () => {
                     <div className="stats__following">
                         <a href="#" className="following__link">
                             <span className="following__title">Publicaciones</span>
-                            <span className="following__number">17</span>
+                            <span className="following__number">{counters.publications}</span>
                         </a>
                     </div>
 
