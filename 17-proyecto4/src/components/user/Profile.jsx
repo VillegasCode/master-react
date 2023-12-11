@@ -3,24 +3,33 @@ import avatar from '../../assets/img/user.png';
 import { GetProfile } from '../../helpers/GetProfile';
 import { useParams, Link } from 'react-router-dom';
 import { Global } from '../../helpers/Global';
+import useAuth from '../../hooks/useAuth';
 
 export const Profile = () => {
 
+    const { auth } = useAuth();
     const [user, setUser] = useState({});
     const [counters, setCounters] = useState({});
+    const [iFollow, setIFollow] = useState(false);
     const params = useParams();
 
     useEffect(() => {
-        GetProfile(params.userId, setUser);
+        getDataUser();
         getCounters();
     }, []);
 
-    useEffect(()=> {
-        GetProfile(params.userId, setUser);
+    useEffect(() => {
+        getDataUser();
         getCounters();
     }, [params]);
 
-    const getCounters = async() => {
+    const getDataUser = async () => {
+        let dataUser = await GetProfile(params.userId, setUser);
+        console.log(dataUser);
+        if (dataUser.following && dataUser.following._id) setIFollow(true);
+    }
+
+    const getCounters = async () => {
         const request = await fetch(Global.url + "user/counters/" + params.userId, {
             method: "GET",
             headers: {
@@ -31,7 +40,7 @@ export const Profile = () => {
 
         const data = await request.json();
 
-        if (data.following){
+        if (data.following) {
             setCounters(data);
         }
     }
@@ -50,7 +59,13 @@ export const Profile = () => {
                     <div className="general-info__container-names">
                         <div className="container-names__name">
                             <h1 className='grande'>{user.name}</h1>
-                            <button className="content__button content__button--right">Seguir</button>
+                            {user._id != auth._id &&
+                                (iFollow ?
+                                <button className="content__button content__button--right post__button">Dejar de seguir</button>
+                                :
+                                <button className="content__button content__button--right">Seguir</button>
+                                )
+                            }
                         </div>
                         <h2 className="container-names__nickname">{user.nick}</h2>
                         <p>{user.bio}</p>
@@ -60,13 +75,13 @@ export const Profile = () => {
                 <div className="profile-info__stats">
 
                     <div className="stats__following">
-                    <Link to={"/social/siguiendo/" + user._id} className="following__link">
+                        <Link to={"/social/siguiendo/" + user._id} className="following__link">
                             <span className="following__title">Siguiendo</span>
                             <span className="following__number">{counters.following >= 1 ? counters.following : 0}</span>
                         </Link>
                     </div>
                     <div className="stats__following">
-                    <Link to={"/social/seguidores/" + user._id} className="following__link">
+                        <Link to={"/social/seguidores/" + user._id} className="following__link">
                             <span className="following__title">Seguidores</span>
                             <span className="following__number">{counters.followed >= 1 ? counters.followed : 0}</span>
                         </Link>
@@ -74,7 +89,7 @@ export const Profile = () => {
 
 
                     <div className="stats__following">
-                    <Link to={"/social/perfil/" + user._id} className="following__link">
+                        <Link to={"/social/perfil/" + user._id} className="following__link">
                             <span className="following__title">Publicaciones</span>
                             <span className="following__number">{counters.publications >= 1 ? counters.publications : 0}</span>
                         </Link>
