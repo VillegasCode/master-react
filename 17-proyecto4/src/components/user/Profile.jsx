@@ -45,6 +45,48 @@ export const Profile = () => {
         }
     }
 
+    const follow = async (userId) => {
+        //petición al backend para guardar el follow
+        const request = await fetch(Global.url + "follow/save", {
+            method: "POST",
+            body: JSON.stringify({ followed: userId }),
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token")
+            }
+        });
+
+        const data = await request.json();
+
+        //cuando este todo correcto
+        if (data.status == "success") {
+            //Actualizar estado de setIFollow
+            setIFollow(true);
+        }
+
+    }
+
+    const unfollow = async (userId) => {
+        //petición al backend para borrar el follow
+        const request = await fetch(Global.url + 'follow/unfollow/' + userId, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token")
+            }
+        });
+
+        const data = await request.json();
+
+        //cuando este todo correcto
+        if (data.status == "success") {
+            //Actualizar estado de setIFollow
+            setIFollow(false);
+        }
+
+    }
+
+
     return (
         <section className="layout__content">
 
@@ -61,9 +103,9 @@ export const Profile = () => {
                             <h1 className='grande'>{user.name}</h1>
                             {user._id != auth._id &&
                                 (iFollow ?
-                                <button className="content__button content__button--right post__button">Dejar de seguir</button>
+                                <button onClick={() => unfollow(user._id)} className="content__button content__button--right post__button">Dejar de seguir</button>
                                 :
-                                <button className="content__button content__button--right">Seguir</button>
+                                <button onClick={() => follow(user._id)} className="content__button content__button--right">Seguir</button>
                                 )
                             }
                         </div>
