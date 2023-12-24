@@ -13,18 +13,19 @@ export const Profile = () => {
     const [iFollow, setIFollow] = useState(false);
     const [publications, setPublications] = useState([]);
     const [page, setPage] = useState(1);
+    const [more, setMore] = useState(true);
     const params = useParams();
 
     useEffect(() => {
         getDataUser();
         getCounters();
-        getPublications();
+        getPublications(1);
     }, []);
 
     useEffect(() => {
         getDataUser();
         getCounters();
-        getPublications();
+        getPublications(1);
     }, [params]);
 
     const getDataUser = async () => {
@@ -109,6 +110,10 @@ export const Profile = () => {
             }
 
             setPublications(newPublications);
+
+            if (publications.length >= (data.total - data.publications.length)) {
+                setMore(false);
+            }
         }
     }
 
@@ -219,13 +224,14 @@ export const Profile = () => {
                 })}
             </div>
 
-            <div className="content__container-btn">
-                <button className="content__btn-more-post" onClick={nextPage}>
-                    Ver mas publicaciones
-                </button>
-                <br />
-            </div>
-
+            {more &&
+                <div className="content__container-btn">
+                    <button className="content__btn-more-post" onClick={nextPage}>
+                        Ver mas publicaciones
+                    </button>
+                </div>
+            }
+            <br />
         </section>
     )
 }
