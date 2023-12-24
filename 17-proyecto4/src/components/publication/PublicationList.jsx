@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import { Global } from '../../helpers/Global';
 import useAuth from '../../hooks/useAuth';
+import avatar from '../../assets/img/user.png'
 
 export const PublicationList = ({publications,
     getPublications,
