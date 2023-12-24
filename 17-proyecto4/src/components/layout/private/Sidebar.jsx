@@ -61,14 +61,12 @@ export const Sidebar = () => {
             } else {
                 setStored("error");
             }
-
-            //LIMPIAR FORMULARIO RESETEARLO
-            if (data.status == "success" && uploadData.status == "success") {
+        }
+        //LIMPIAR FORMULARIO RESETEARLO
+            //if (data.status == "success" && uploadData.status == "success") {
                 const myForm = document.querySelector("#publication-form");
                 myForm.reset();
-            }
-
-        }
+            //}
     }
 
     return (
