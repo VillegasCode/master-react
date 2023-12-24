@@ -11,16 +11,20 @@ export const Profile = () => {
     const [user, setUser] = useState({});
     const [counters, setCounters] = useState({});
     const [iFollow, setIFollow] = useState(false);
+    const [publications, setPublications] = useState([]);
+    const [page, setPage] = useState(1);
     const params = useParams();
 
     useEffect(() => {
         getDataUser();
         getCounters();
+        getPublications();
     }, []);
 
     useEffect(() => {
         getDataUser();
         getCounters();
+        getPublications();
     }, [params]);
 
     const getDataUser = async () => {
@@ -86,6 +90,34 @@ export const Profile = () => {
 
     }
 
+    const getPublications = async (nextPage = 1) => {
+        const request = await fetch(Global.url + "publication/user/" + params.userId + "/" + nextPage, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token")
+            }
+        });
+
+        const data = await request.json();
+
+        if (data.status == "success") {
+            let newPublications = data.publications;
+
+            if (publications.length >= 1) {
+                newPublications = [...publications, ...data.publications];
+            }
+
+            setPublications(newPublications);
+        }
+    }
+
+    const nextPage = () => {
+        let next = page + 1;
+        setPage(next);
+        getPublications(next);
+    }
+
 
     return (
         <section className="layout__content">
@@ -103,9 +135,9 @@ export const Profile = () => {
                             <h1 className='grande'>{user.name}</h1>
                             {user._id != auth._id &&
                                 (iFollow ?
-                                <button onClick={() => unfollow(user._id)} className="content__button content__button--right post__button">Dejar de seguir</button>
-                                :
-                                <button onClick={() => follow(user._id)} className="content__button content__button--right">Seguir</button>
+                                    <button onClick={() => unfollow(user._id)} className="content__button content__button--right post__button">Dejar de seguir</button>
+                                    :
+                                    <button onClick={() => follow(user._id)} className="content__button content__button--right">Seguir</button>
                                 )
                             }
                         </div>
@@ -145,46 +177,53 @@ export const Profile = () => {
 
             <div className="content__posts">
 
-                <article className="posts__post">
+                {publications.map(publication => {
+                    return (
 
-                    <div className="post__container">
+                        <article className="posts__post" key={publication._id}>
 
-                        <div className="post__image-user">
-                            <a href="#" className="post__image-link">
-                                <img src={avatar} className="post__user-image" alt="Foto de perfil" />
-                            </a>
-                        </div>
+                            <div className="post__container">
 
-                        <div className="post__body">
+                                <div className="post__image-user">
+                                    <Link to={"/social/perfil/" + publication.user._id} className="post__image-link">
+                                        {publication.user.image != "default.png" && <img src={Global.url + "user/avatar/" + publication.user.image} className="post__user-image" alt="Foto de perfil" />}
+                                        {publication.user.image == "default.png" && <img src={avatar} className='post__user-image' alt="Foto de perfil" />}
+                                    </Link>
+                                </div>
 
-                            <div className="post__user-info">
-                                <a href="#" className="user-info__name">Victor Robles</a>
-                                <span className="user-info__divider"> | </span>
-                                <a href="#" className="user-info__create-date">Hace 1 hora</a>
+                                <div className="post__body">
+
+                                    <div className="post__user-info">
+                                        <a href="#" className="user-info__name">{publication.user.name + " "}</a>
+                                        <span className="user-info__divider"> | </span>
+                                        <a href="#" className="user-info__create-date">{publication.created_at}</a>
+                                    </div>
+
+                                    <h4 className="post__content">{publication.text}</h4>
+
+                                </div>
+
                             </div>
 
-                            <h4 className="post__content">Hola, buenos dias.</h4>
 
-                        </div>
+                            {auth._id == publication.user._id &&
+                                <div className="post__buttons">
 
-                    </div>
+                                    <a href="#" className="post__button">
+                                        <i className="fa-solid fa-trash-can"></i>
+                                    </a>
 
-
-                    <div className="post__buttons">
-
-                        <a href="#" className="post__button">
-                            <i className="fa-solid fa-trash-can"></i>
-                        </a>
-
-                    </div>
-
-                </article>
+                                </div>
+                            }
+                        </article>);
+                })}
             </div>
 
             <div className="content__container-btn">
-                <button className="content__btn-more-post">
+                <button className="content__btn-more-post" onClick={nextPage}>
                     Ver mas publicaciones
                 </button>
+                <br />
             </div>
 
         </section>
