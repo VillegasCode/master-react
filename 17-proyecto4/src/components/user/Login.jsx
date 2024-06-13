@@ -10,7 +10,7 @@ export const Login = () => {
   const { form, changed } = useForm({});
   const [saved, setSaved] = useState("not_sent");
 
-  const {setAuth} = useAuth();
+  const { setAuth } = useAuth();
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -31,11 +31,14 @@ export const Login = () => {
     const data = await request.json();
     console.log("data tiene: " + JSON.stringify(data));
 
-    //Persistir LA SESIÓN con el TOKEN en todo el navegador mientras tenga la sesión iniciada
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+
 
     if (data.status == "success") {
+
+      //Persistir LA SESIÓN con el TOKEN en todo el navegador mientras tenga la sesión iniciada
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
       setSaved("login");
 
       //SETEAR LOS DATOS EN EL AUTH
