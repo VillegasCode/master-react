@@ -6,7 +6,7 @@ import avatar from '../../assets/img/user.png';
 import ReactTimeAgo from "react-time-ago";
 
 export const PublicationList = ({
-    publications = {}, // Valor predeterminado como objeto vacío
+    publications = { docs: [] },
     getPublications,
     page,
     setPage,
@@ -44,12 +44,13 @@ export const PublicationList = ({
         }
     }
 
-    console.log('publications:', publications); // Verifica el valor de publications en la consola
-
     return (
         <>
             <div className="content__posts">
                 {Array.isArray(publications.docs) && publications.docs.map(publication => {
+                    // Convertir created_at a timestamp
+                    const createdAtTimestamp = new Date(publication.created_at).getTime();
+
                     return (
                         <article className="posts__post" key={publication._id}>
                             <div className="post__container">
@@ -67,11 +68,11 @@ export const PublicationList = ({
                                         <a href="#" className="user-info__name">{publication.user.name + " "}</a>
                                         <span className="user-info__divider"> | </span>
                                         <a href="#" className="user-info__create-date">
-                                            <ReactTimeAgo date={publication.created_at} locale="es-ES" />
+                                            <ReactTimeAgo date={createdAtTimestamp} locale="es-ES" />
                                         </a>
                                     </div>
                                     <h4 className="post__content">{publication.text}</h4>
-                                    {publication.file && <img src={Global.url + "publication/media/" + publication.file} />}
+                                    {publication.file && <img src={Global.url + "publication/media/" + publication.file} alt="Contenido multimedia" />}
                                 </div>
                             </div>
                             {auth._id === publication.user._id && (
