@@ -1,15 +1,22 @@
 import React from 'react';
 import avatar from '../../assets/img/user.png';
 import { Global } from '../../helpers/Global';
-import useAuth from '../../hooks/useAuth'
+import useAuth from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
+import ReactTimeAgo from "react-time-ago";
 
-export const UserList = ({ users, getUsers, following, setFollowing, 
-    page, setPage, more, loading }) => {
-
+export const UserList = ({
+    users = [],
+    getUsers,
+    following = [],
+    setFollowing,
+    page,
+    setPage,
+    more,
+    loading
+}) => {
     const { auth } = useAuth();
 
-    //Mostrar usuarios de acuerdo a sus páginas correspondientes (PAGINAR USUARIOS Y LISTARLOS)
     const nextPage = () => {
         let next = page + 1;
         setPage(next);
@@ -17,7 +24,6 @@ export const UserList = ({ users, getUsers, following, setFollowing,
     }
 
     const follow = async (userId) => {
-        //petición al backend para guardar el follow
         const request = await fetch(Global.url + "follow/save", {
             method: "POST",
             body: JSON.stringify({ followed: userId }),
@@ -29,16 +35,12 @@ export const UserList = ({ users, getUsers, following, setFollowing,
 
         const data = await request.json();
 
-        //cuando este todo correcto
-        if (data.status == "success") {
-            //Actualizar estado de following agregando el nuevo follow
-            setFollowing([...following, userId])
+        if (data.status === "success") {
+            setFollowing([...following, userId]);
         }
-
     }
 
     const unfollow = async (userId) => {
-        //petición al backend para borrar el follow
         const request = await fetch(Global.url + 'follow/unfollow/' + userId, {
             method: "DELETE",
             headers: {
@@ -49,82 +51,77 @@ export const UserList = ({ users, getUsers, following, setFollowing,
 
         const data = await request.json();
 
-        //cuando este todo correcto
-        if (data.status == "success") {
-            //Actualizar estado de following
-            //filtrando los datos para eliminar el antiguo userId
-            //que acabo de dejar de seguir
-            let filterFollowings = following.filter(followingUserId => userId !== followingUserId);
-            setFollowing(filterFollowings);
+        if (data.status === "success") {
+            const updatedFollowing = following.filter(followingUserId => userId !== followingUserId);
+            setFollowing(updatedFollowing);
         }
-
     }
 
     return (
         <>
             <div className="content__posts">
-
                 {users.map(user => {
+                    // Imprimir el objeto user para verificar su estructura
+                    console.log(user);
+                    
+                    // Usar la propiedad correcta que contiene el ID del usuario
+                    const userIdentificador = user;
+                    // Verificar que created_at sea válido antes de parsear
+                    const createdAtTimestamp = user.created_at ? Date.parse(user.created_at) : null;
+
                     return (
-                        <article className="posts__post" key={user._id}>
-
+                        <article className="posts__post" key={userIdentificador}>
                             <div className="post__container">
-
                                 <div className="post__image-user">
-                                    <Link to={"/social/perfil/" + user._id} className="post__image-link">
-                                        {user.image != "default.png" && <img src={Global.url + "user/avatar/" + user.image} className="post__user-image" alt="Foto de perfil" />}
-                                        {user.image == "default.png" && <img src={avatar} className='post__user-image' alt="Foto de perfil" />}
+                                    <Link to={"/social/perfil/" + userIdentificador} className="post__image-link">
+                                        {user.image !== "default.png" ? (
+                                            <img src={Global.url + "user/avatar/" + user.image} className="post__user-image" alt="Foto de perfil" />
+                                        ) : (
+                                            <img src={avatar} className='post__user-image' alt="Foto de perfil" />
+                                        )}
                                     </Link>
                                 </div>
-
                                 <div className="post__body">
-
                                     <div className="post__user-info">
-                                    <Link to={"/social/perfil/" + user._id} className="user-info__name">{user.name} {user.surname}</Link>
+                                        <Link to={"/social/perfil/" + (userIdentificador)} className="user-info__name">
+                                            {user.name} {user.surname}
+                                        </Link>
                                         <span className="user-info__divider"> | </span>
-                                    <Link to={"/social/perfil/" + user._id}  className="user-info__create-date">{user.created_at}</Link>
+                                        <Link to={"/social/perfil/" + (userIdentificador)} className="user-info__create-date">
+                                            {createdAtTimestamp && <ReactTimeAgo date={createdAtTimestamp} locale="es-ES" />}
+                                        </Link>
                                     </div>
-
                                     <h4 className="post__content">{user.bio}</h4>
-
                                 </div>
-
                             </div>
 
-                            {/* SOLO MOSTRAR ESTO CUANDO EL USUARIO NO SEA EL MÍO */}
-                            {user._id != auth._id &&
+                            {(userIdentificador) !== auth._id && (
                                 <div className="post__buttons">
-                                    {!following.includes(user._id) &&
-                                        <button className="post__button post__button--green" onClick={() => follow(user._id)}>
+                                    {!following.includes(userIdentificador) ? (
+                                        <button className="post__button post__button--green" onClick={() => follow(userIdentificador)}>
                                             Seguir
                                         </button>
-                                    }
-
-                                    {following.includes(user._id) &&
-                                        <button className="post__button" onClick={() => unfollow(user._id)}>
+                                    ) : (
+                                        <button className="post__button" onClick={() => unfollow(userIdentificador)}>
                                             Dejar de seguir
                                         </button>
-                                    }
-
+                                    )}
                                 </div>
-                            }
+                            )}
                         </article>
-
                     );
-                })
-                }
+                })}
             </div>
 
-            {loading ? <h1>Cargando...</h1> : ""}
+            {loading && <h1>Cargando...</h1>}
 
-            {more &&
+            {more && (
                 <div className="content__container-btn">
                     <button className="content__btn-more-post" onClick={nextPage}>
-                        Ver mas personas
+                        Ver más personas
                     </button>
                 </div>
-            }
-
+            )}
         </>
-    )
+    );
 }
