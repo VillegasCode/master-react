@@ -48,8 +48,8 @@ export const Followers = () => {
 
     data.users = cleanUsers;
 
-    console.log(cleanUsers);
-
+    console.log("Los users FOLLOWERS deben estar con sus nombres: " + data.users);
+    console.log(users);
     //Crear un estado para poder listar usuarios
     if (data.users && data.status == "success") {
 
@@ -65,7 +65,7 @@ export const Followers = () => {
       setLoading(false);
 
       //Paginación
-      if (users.length >= (data.total - data.users.length)) {
+      if (users.length >= data.total - data.follows.length) {
         setMore(false);
       }
     }
