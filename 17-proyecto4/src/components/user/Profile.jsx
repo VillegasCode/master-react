@@ -7,7 +7,7 @@ import useAuth from '../../hooks/useAuth';
 import { PublicationList } from '../publication/PublicationList';
 
 export const Profile = () => {
-
+    //Estados
     const { auth } = useAuth();
     const [user, setUser] = useState({});
     const [counters, setCounters] = useState({});
@@ -17,12 +17,14 @@ export const Profile = () => {
     const [more, setMore] = useState(true);
     const params = useParams();
 
+    //Hook useEffect que se ejecuta apenas carga la página
     useEffect(() => {
         getDataUser();
         getCounters();
         getPublications(1, true);
     }, []);
 
+    //Hook useEffect que se ejecuta los métodos cada vez que hay un cambio en params
     useEffect(() => {
         getDataUser();
         getCounters();
@@ -30,13 +32,16 @@ export const Profile = () => {
         getPublications(1, true);
     }, [params]);
 
+    //Método
     const getDataUser = async () => {
+        //Recibe datos del user desde params y del hook state setUser
         let dataUser = await GetProfile(params.userId, setUser);
-        console.log(dataUser);
         if (dataUser.following && dataUser.following._id) setIFollow(true);
     }
-
+    
+    //Petición AJAX
     const getCounters = async () => {
+        //Recibe información de los contadores haciendo una consulta al API
         const request = await fetch(Global.url + "user/counters/" + params.userId, {
             method: "GET",
             headers: {
@@ -44,13 +49,12 @@ export const Profile = () => {
                 "Authorization": localStorage.getItem("token")
             }
         });
-
+        
         const data = await request.json();
-
-        if (data.following) {
-            setCounters(data);
-        }
+        setCounters(data);
+    
     }
+
 
     const follow = async (userId) => {
         //petición al backend para guardar el follow
@@ -128,6 +132,9 @@ export const Profile = () => {
             }
 
         }
+        else {
+            setMore(false);
+        }
     }
 
 
@@ -169,7 +176,7 @@ export const Profile = () => {
                     <div className="stats__following">
                         <Link to={"/social/seguidores/" + user._id} className="following__link">
                             <span className="following__title">Seguidores</span>
-                            <span className="following__number">{counters.followed >= 1 ? counters.followed : 0}</span>
+                            <span className="following__number">{counters.followed  >= 1 ? counters.followed : 0}</span>
                         </Link>
                     </div>
 
