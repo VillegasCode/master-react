@@ -33,10 +33,10 @@ export const People = () => {
     if (data.users && data.status == "success") {
       let newUsers = data.users;
 
-      if (users.length >= 1) {
+      if (data.users.length >= 1) {
         newUsers = [...users, ...data.users];
       }
-
+      console.log(users.length);
       setUsers(newUsers);
       setFollowing(data.user_following);
       //Termina de hacer la petición AJAX entonces se vuelve false el estado LOADING
@@ -48,7 +48,6 @@ export const People = () => {
       }
     }
   }
-
 
 
   return (
