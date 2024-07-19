@@ -22,8 +22,9 @@ export const UserList = ({
         setPage(next);
         getUsers(next);
     }
-
+    
     const follow = async (userId) => {
+        //Petición al backend para guardar el follow
         const request = await fetch(Global.url + "follow/save", {
             method: "POST",
             body: JSON.stringify({ followed: userId }),
@@ -62,18 +63,22 @@ export const UserList = ({
             <div className="content__posts">
                 {users.map(user => {
                     // Imprimir el objeto user para verificar su estructura
-                    console.log(user);
+                    console.log("Los USERSlist deben estar con sus nombres: " + JSON.stringify(users));
                     
                     // Usar la propiedad correcta que contiene el ID del usuario
-                    const userIdentificador = user;
+                    console.log("USERid: " + user._id);
                     // Verificar que created_at sea válido antes de parsear
                     const createdAtTimestamp = user.created_at ? Date.parse(user.created_at) : null;
+                    
+                    console.log("NAME: " + user.name);
+                    console.log("SURNAME: " + user.surname);
+                    console.log("IMAGEN: " + user.image);
 
                     return (
-                        <article className="posts__post" key={userIdentificador}>
+                        <article className="posts__post" key={user._id}>
                             <div className="post__container">
                                 <div className="post__image-user">
-                                    <Link to={"/social/perfil/" + userIdentificador} className="post__image-link">
+                                    <Link to={"/social/perfil/" + user._id} className="post__image-link">
                                         {user.image !== "default.png" ? (
                                             <img src={Global.url + "user/avatar/" + user.image} className="post__user-image" alt="Foto de perfil" />
                                         ) : (
@@ -83,11 +88,11 @@ export const UserList = ({
                                 </div>
                                 <div className="post__body">
                                     <div className="post__user-info">
-                                        <Link to={"/social/perfil/" + (userIdentificador)} className="user-info__name">
+                                        <Link to={"/social/perfil/" + (user._id)} className="user-info__name">
                                             {user.name} {user.surname}
                                         </Link>
                                         <span className="user-info__divider"> | </span>
-                                        <Link to={"/social/perfil/" + (userIdentificador)} className="user-info__create-date">
+                                        <Link to={"/social/perfil/" + (user._id)} className="user-info__create-date">
                                             {createdAtTimestamp && <ReactTimeAgo date={createdAtTimestamp} locale="es-ES" />}
                                         </Link>
                                     </div>
@@ -95,14 +100,14 @@ export const UserList = ({
                                 </div>
                             </div>
 
-                            {(userIdentificador) !== auth._id && (
+                            {(user._id) !== auth._id && (
                                 <div className="post__buttons">
-                                    {!following.includes(userIdentificador) ? (
-                                        <button className="post__button post__button--green" onClick={() => follow(userIdentificador)}>
+                                    {!following.includes(user._id) ? (
+                                        <button className="post__button post__button--green" onClick={() => follow(user._id)}>
                                             Seguir
                                         </button>
                                     ) : (
-                                        <button className="post__button" onClick={() => unfollow(userIdentificador)}>
+                                        <button className="post__button" onClick={() => unfollow(user._id)}>
                                             Dejar de seguir
                                         </button>
                                     )}
