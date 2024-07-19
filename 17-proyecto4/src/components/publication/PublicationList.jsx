@@ -6,7 +6,7 @@ import avatar from '../../assets/img/user.png';
 import ReactTimeAgo from "react-time-ago";
 
 export const PublicationList = ({
-    publications = { docs: [] },
+    publications,
     getPublications,
     page,
     setPage,
@@ -43,11 +43,11 @@ export const PublicationList = ({
             console.error("Error:", error);
         }
     }
-
+    console.log("publications: " + JSON.stringify(publications));
     return (
         <>
             <div className="content__posts">
-                {Array.isArray(publications.docs) && publications.docs.map(publication => {
+                {publications.map(publication => {
                     // Convertir created_at a timestamp
                     const createdAtTimestamp = new Date(publication.created_at).getTime();
 
@@ -65,11 +65,12 @@ export const PublicationList = ({
                                 </div>
                                 <div className="post__body">
                                     <div className="post__user-info">
-                                        <a href="#" className="user-info__name">{publication.user.name + " "}</a>
+                                         <Link to={"/social/perfil/" + publication.user._id} className="user-info__name">{publication.user.name + " "}
                                         <span className="user-info__divider"> | </span>
-                                        <a href="#" className="user-info__create-date">
+                                        </Link>
+                                         <Link to={"/social/perfil/" + publication.user._id} className="user-info__create-date">
                                             <ReactTimeAgo date={createdAtTimestamp} locale="es-ES" />
-                                        </a>
+                                        </Link>
                                     </div>
                                     <h4 className="post__content">{publication.text}</h4>
                                     {publication.file && <img src={Global.url + "publication/media/" + publication.file} alt="Contenido multimedia" />}
