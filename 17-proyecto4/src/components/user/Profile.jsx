@@ -32,7 +32,7 @@ export const Profile = () => {
         getPublications(1, true);
     }, [params]);
 
-    //Método
+    //Método para obtener los datos del usuario del backend que luego son llamados a través de los Hooks useEffect
     const getDataUser = async () => {
         //Recibe datos del user desde params y del hook state setUser
         let dataUser = await GetProfile(params.userId, setUser);
@@ -40,6 +40,7 @@ export const Profile = () => {
     }
     
     //Petición AJAX
+    //Método para obtener los datos de los contadores del backend que luego son llamados a través de los Hooks useEffect
     const getCounters = async () => {
         //Recibe información de los contadores haciendo una consulta al API
         const request = await fetch(Global.url + "user/counters/" + params.userId, {
@@ -97,6 +98,7 @@ export const Profile = () => {
 
     }
 
+    //Método para obtener las publicaciones del usuario que inició sesión en la red que luego son llamados a través de los Hooks useEffect
     const getPublications = async (nextPage = 1, newProfile = false) => {
         const request = await fetch(Global.url + "publication/user/" + params.userId + "/" + nextPage, {
             method: "GET",
