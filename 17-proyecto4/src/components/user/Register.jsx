@@ -26,16 +26,15 @@ export const Register = () => {
 
     const data = await request.json();
 
-    //console.log(data);
 
     if (data.status == "success") {
       setSaved("saved");
-    } if (data.status == "duplicate") {
+    } else if (data.status == "duplicate") {
       setSaved("duplicate");
     } else {
       setSaved("error");
     }
-
+    
   } //FIN DEL MÉTODO GUARDAR
 
 
@@ -56,13 +55,18 @@ export const Register = () => {
           : ""}
 
         {saved == "error" ?
-          <strong className='alert alert-danger'>"Error, no se registró usuario!"</strong>
+          <strong className='alert alert-danger'>"Error, no se registró usuario! " {saved}</strong>
           : ""}
 
         <form className='register-form' onSubmit={saveUser}>
           <div className='form-group'>
             <label htmlFor='name'>Nombre</label>
             <input type='text' name='name' onChange={changed} />
+          </div>
+
+          <div className='form-group'>
+            <label htmlFor='name'>Apellidos</label>
+            <input type='text' name='surname' onChange={changed} />
           </div>
 
           <div className='form-group'>
