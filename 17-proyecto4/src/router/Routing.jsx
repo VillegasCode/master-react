@@ -12,6 +12,7 @@ import { Config } from "../components/user/Config";
 import { Followers } from "../components/follow/Followers";
 import { Following } from "../components/follow/Following";
 import { Profile } from "../components/user/Profile";
+import { Inicio } from "../components/publication/Inicio";
 
 export const Routing = () => {
     return (
@@ -27,7 +28,7 @@ export const Routing = () => {
 
                     {/* RUTA PRIVADA */}
                     <Route path="/social" element={<PrivateLayout />}>
-                        <Route index element={<Feed />} />
+                        <Route index element={<Inicio />} />
                         <Route path="feed" element={<Feed />} />
                         <Route path="logout" element={<Logout />} />
                         <Route path="gente" element={<People />} />
