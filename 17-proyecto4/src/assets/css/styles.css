@@ -290,6 +290,7 @@ body {
     line-height: 1.5;
     cursor: pointer;
     font-size: 1.4rem;
+    width: auto;
 }
 
 /*ESTILOS BARRA LATERAL*/
@@ -440,10 +441,8 @@ textarea:focus{
     width: 100%;
 }
 
-
-.form-post__btn-submit,
-input[type="submit"],
-button{
+#button-enabled,
+button {
     background-color: var(--color-background-btn-success);
     color: var(--color-text-navbar) !important;
     padding: 0.5rem 1rem;
@@ -453,6 +452,40 @@ button{
     line-height: 1.5;
     cursor: pointer;
     font-size: 1.4rem;
+    width: 100px;
+    height: 35px;
+}
+
+
+#button-disabled,
+button {
+    background-color: rgb(185, 185, 185);
+    color: var(--color-text-navbar) !important;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 0.3rem;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    cursor: pointer;
+    font-size: 1.4rem;
+    width: 100px;
+    height: 35px;
+    text-align: center;
+}
+
+input[type=submit],
+button {
+    background-color: var(--color-background-btn-success);
+    color: var(--color-text-navbar) !important;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border-btn-success);
+    border-radius: 0.3rem;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    cursor: pointer;
+    font-size: 1.4rem;
+    width: 135px;
+    height: 40px;
 }
 
 .alert {
