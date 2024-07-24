@@ -11,7 +11,7 @@ export const useForm = (initialObj = {}) => {
             ...form,
             [name]:value
         });
-
+        //console.log(value);
     }
 
     return {
