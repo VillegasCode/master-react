@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { Global } from '../../helpers/Global';
+import { Login } from './Login';
 
 export const Register = () => {
 
   const { form, changed } = useForm({});
   const [saved, setSaved] = useState("not_sent");
+  const myForm = document.querySelector("#register-form");
 
   const saveUser = async (e) => {
     //Prevenir actualización de pantalla al presionar el botón registrar
@@ -29,18 +31,24 @@ export const Register = () => {
 
     if (data.status == "success") {
       setSaved("saved");
+      //Limpiar formulario de registro
+      myForm.reset();
+      //REDIRECCIÓN DE REGISTER AL LOGIN
+      setTimeout(() => {
+        location.href = "/login";
+      }, 1000);
     } else if (data.status == "duplicate") {
       setSaved("duplicate");
     } else {
       setSaved("error");
     }
-    
+
   } //FIN DEL MÉTODO GUARDAR
 
 
   return (
     <>
-      <header className="content__header content__header--public">
+    <header className="content__header content__header--public">
         <h1 className="content__title">Registro</h1>
       </header>
 
@@ -58,7 +66,7 @@ export const Register = () => {
           <strong className='alert alert-danger'>"Error, no se registró usuario! " {saved}</strong>
           : ""}
 
-        <form className='register-form' onSubmit={saveUser}>
+        <form id='register-form' className='register-form' onSubmit={saveUser}>
           <div className='form-group'>
             <label htmlFor='name'>Nombre</label>
             <input type='text' name='name' onChange={changed} />
@@ -80,13 +88,13 @@ export const Register = () => {
           </div>
 
           <div className='form-group'>
-            <label htmlFor='password'>Contraseña</label>
+            <label htmlFor='password'>Contraseña (min: 8, max: 16 caracteres)</label>
             <input type='password' name='password' onChange={changed} />
           </div>
 
           <input type='submit' value='Regístrate' className='btn btn-success' onChange={changed} />
         </form>
       </div>
-    </>
+      </>
   )
 }
