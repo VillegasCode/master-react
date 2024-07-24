@@ -109,15 +109,13 @@ export const Profile = () => {
         });
 
         const data = await request.json();
-
+        
         if (data.status == "success") {
             let newPublications = data.publications;
 
             if (!newProfile && publications.length >= 1) {
                 newPublications = [...publications, ...data.publications];
-            }
-
-            if(newProfile){
+            } else if (newProfile){
                 newPublications = data.publications;
                 setMore(true);
                 setPage(1);
@@ -125,11 +123,18 @@ export const Profile = () => {
 
             setPublications(newPublications);
 
+            if (newPublications.length == 0){
+                //Ocultamos el botón ver más si no hay publicaciones que mostrar
+                setMore(false);
+            }
+
             if (!newProfile && publications.length >= (data.total - data.publications.length)) {
+                //Ocultamos el botón ver más si llegamos al final de las publicaciones que mostrar
                 setMore(false);
             }
 
             if(data.pages <= 1){
+                //Ocultamos el botón ver más si no hay publicaciones que mostrar
                 setMore(false);
             }
 
