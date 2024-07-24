@@ -2,15 +2,72 @@ import React from 'react';
 import avatar from '../../../assets/img/user.png';
 import { Global } from '../../../helpers/Global';
 import useAuth from '../../../hooks/useAuth';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useForm } from '../../../hooks/useForm';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const Sidebar = () => {
 
     const { auth, counters } = useAuth();
+    const [counters2, setCounters] = useState({});
     const { form, changed } = useForm({});
+    const [activarButton, setActivarButton] = useState(true);
+    const [estiloButton, setEstiloButton] = useState("button-disabled");
     const [stored, setStored] = useState("");
+    const params = useParams();
+
+    //Modificamos el estado y estilo del botón enviar solo cuando el input que está guarado en form.text cambie
+    useEffect(() => {
+        let longitudPost = form.text;
+        //Verificamos que el valor de longitudPost sea diferente a undefined o null
+        if (longitudPost !== undefined && longitudPost !== null) {
+            //Creamos cadenatext para almacenar el valor de longitudpost después de limpiar espacios adelante y al final
+            let cadenatext = longitudPost.trim();
+            //Comprobamos que el valor que tiene cadenatext sea un texto válido y no un texto vacío
+            if (cadenatext.trim() !== "") {
+                setActivarButton(false);
+                setEstiloButton("button-enabled");
+            } else {
+                setActivarButton(true);
+                setEstiloButton("button-disabled");
+            }
+        }
+    }, [form.text]);
+
+    //Este código es para realizar ciertas cosas cada vez que cambie la propiedad onChange de algún input
+    // const handleInputChange = (event) => {
+    //     const valor = event.target.value;
+    //     //Verificar si el valor es válido
+    //     if (valor.trim() !== "") {
+    //         setActivarButton(false);
+    //         setEstiloButton("submit");
+    //     } else {
+    //         setActivarButton(true);
+    //         //setEstiloButton("submit-disabled");
+    //     }
+    // }
+
+    //Hook useEffect que ejecuta el método getCounters cada vez que hay un cambio en params
+    useEffect(() => {
+        getCounters();
+    }, [params]);
+
+    //Petición AJAX
+    //Método para obtener los datos de los contadores del backend que luego son llamados a través de los Hooks useEffect
+    const getCounters = async () => {
+        //Recibe información de los contadores haciendo una consulta al API
+        const request = await fetch(Global.url + "user/counters/" + auth._id, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token")
+            }
+        });
+
+        const data = await request.json();
+        setCounters(data);
+
+    }
 
     const savePublication = async (e) => {
         e.preventDefault();
@@ -31,10 +88,12 @@ export const Sidebar = () => {
         });
 
         const data = await request.json();
-
+        console.log(data);
         //Mostrar mensajes de éxito o error
         if (data.status = "success") {
             setStored("stored");
+            setActivarButton(true);
+            setEstiloButton("button-disabled");
         } else {
             setStored("error");
         }
@@ -63,10 +122,14 @@ export const Sidebar = () => {
             }
         }
         //LIMPIAR FORMULARIO RESETEARLO
-            //if (data.status == "success" && uploadData.status == "success") {
-                const myForm = document.querySelector("#publication-form");
-                myForm.reset();
-            //}
+        //if (data.status == "success" && uploadData.status == "success") {
+        const myForm = document.querySelector("#publication-form");
+        myForm.reset();
+        //Después que se ha publicado Limpiamos el hook stored después de 2 segundos
+        setTimeout(() => {
+            setStored("");
+        }, 2000);
+        //}
     }
 
     return (
@@ -97,13 +160,13 @@ export const Sidebar = () => {
                         <div className="stats__following">
                             <Link to={"/social/siguiendo/" + auth._id} className="following__link">
                                 <span className="following__title">Siguiendo</span>
-                                <span className="following__number">{counters.following}</span>
+                                <span className="following__number">{counters2.following}</span>
                             </Link>
                         </div>
                         <div className="stats__following">
                             <Link to={"/social/seguidores/" + auth._id} className="following__link">
                                 <span className="following__title">Seguidores</span>
-                                <span className="following__number">{counters.followed}</span>
+                                <span className="following__number">{counters2.followed}</span>
                             </Link>
                         </div>
 
@@ -111,7 +174,7 @@ export const Sidebar = () => {
                         <div className="stats__following">
                             <Link to={"/social/perfil/" + auth._id} className="following__link">
                                 <span className="following__title">Publicaciones</span>
-                                <span className="following__number">{counters.publications}</span>
+                                <span className="following__number">{counters2.publications}</span>
                             </Link>
                         </div>
 
@@ -131,16 +194,16 @@ export const Sidebar = () => {
                     <form id="publication-form" className="container-form__form-post" onSubmit={savePublication}>
 
                         <div className="form-post__inputs">
-                            <label htmlFor="text" className="form-post__label">¿Que estas pesando hoy?</label>
+                            <label htmlFor="text" className="form-post__label">¿Que estás pesando hoy? (obligatorio)</label>
                             <textarea name="text" className="form-post__textarea" onChange={changed} />
                         </div>
 
                         <div className="form-post__inputs">
-                            <label htmlFor="file" className="form-post__label">Sube tu foto</label>
-                            <input type="file" name="file0" id="file" className="form-post__image" />
+                            <label htmlFor="file" className="form-post__label">Sube tu foto (opcional)</label>
+                            <input text="Examinar" type="file" name="file0" id="file" className="form-post__image" />
                         </div>
 
-                        <input type="submit" value="Enviar" className="form-post__btn-submit" />
+                        <input id={estiloButton} type="submit" value="Enviar" className="form-post__btn-submit" disabled={activarButton} />
 
                     </form>
 
