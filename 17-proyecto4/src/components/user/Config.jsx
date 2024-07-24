@@ -35,13 +35,14 @@ export const Config = () => {
 
     const data = await request.json();
 
-    if (data.status == "success" && data.user) {
+    if (data.status == "success" && data.userUpdated) {
       delete data.userUpdated.password;
       setAuth(data.userUpdated);
       setSaved("saved");
-      console.log(JSON.stringify(data));
+      console.log("Si es exitoso el texto: " + JSON.stringify(data));
     } else {
       setSaved("error");
+      console.log("Si falló en el texto: " + JSON.stringify(data));
     }
 
     //Subida de imágenes
@@ -66,8 +67,10 @@ export const Config = () => {
       if (uploadData.status == "success" && uploadData.user) {
         setAuth(uploadData.user);
         setSaved("saved");
+        console.log("Si la imagen subió: " + JSON.stringify(uploadData));
       } else {
         setSaved("error");
+        console.log("Si la imagen falló: " + JSON.stringify(uploadData));
       }
     }
   }
